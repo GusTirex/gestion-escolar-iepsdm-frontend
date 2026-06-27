@@ -57,14 +57,14 @@ function Login() {
 
         <form onSubmit={onSubmit} className="login-form">
           <label className="field">
-            Usuario
+            Usuario o correo
             <input
               id="login-usuario"
               name="usuario"
               autoComplete="username"
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
-              placeholder="ej. jperez"
+              placeholder="usuario o correo@colegio.edu.pe"
             />
           </label>
           <label className="field">

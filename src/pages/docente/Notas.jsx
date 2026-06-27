@@ -27,7 +27,6 @@ function DocenteNotas() {
   useEffect(() => {
     if (!cursoId) return;
     const curso = cursos.find((c) => String(c.idCurso) === String(cursoId));
-    setEvalId("");
     getEvaluaciones().then((evs) =>
       setEvaluaciones(evs.filter((e) => String(e.idCurso) === String(cursoId)))
     );
@@ -36,10 +35,7 @@ function DocenteNotas() {
 
   // Al elegir evaluacion: precarga las notas existentes
   useEffect(() => {
-    if (!evalId) {
-      setValores({});
-      return;
-    }
+    if (!evalId) return;
     getNotas().then((notas) => {
       const map = {};
       notas
@@ -50,6 +46,21 @@ function DocenteNotas() {
       setValores(map);
     });
   }, [evalId]);
+
+  // Los reseteos se hacen en los manejadores (no en efectos) para evitar renders en cascada.
+  const onCursoChange = (e) => {
+    setCursoId(e.target.value);
+    setEvalId("");
+    setValores({});
+    setEvaluaciones([]);
+    setEstudiantes([]);
+  };
+
+  const onEvalChange = (e) => {
+    const v = e.target.value;
+    setEvalId(v);
+    if (!v) setValores({});
+  };
 
   const guardar = async () => {
     if (!evalId) return;
@@ -85,7 +96,7 @@ function DocenteNotas() {
       <div className="toolbar">
         <label className="field">
           Curso
-          <select value={cursoId} onChange={(e) => setCursoId(e.target.value)}>
+          <select value={cursoId} onChange={onCursoChange}>
             <option value="">— Selecciona —</option>
             {cursos.map((c) => (
               <option key={c.idCurso} value={c.idCurso}>{c.nombre}</option>
@@ -95,7 +106,7 @@ function DocenteNotas() {
 
         <label className="field">
           Evaluación
-          <select value={evalId} onChange={(e) => setEvalId(e.target.value)} disabled={!cursoId}>
+          <select value={evalId} onChange={onEvalChange} disabled={!cursoId}>
             <option value="">— Selecciona —</option>
             {evaluaciones.map((ev) => (
               <option key={ev.idEvaluacion} value={ev.idEvaluacion}>{ev.nombre}</option>
