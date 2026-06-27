@@ -1,0 +1,89 @@
+.promedio-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--azul), var(--azul-osc));
+  color: #fff;
+  border-radius: var(--radio);
+  padding: 22px 24px;
+  margin: 24px 0;
+  box-shadow: var(--sombra);
+}
+
+.promedio-banner p {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.promedio-banner h2 {
+  color: #fff;
+  font-size: 34px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.promedio-icon {
+  font-size: 34px;
+}
+
+.notas-cursos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.curso-card {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 18px 20px;
+  box-shadow: var(--sombra);
+}
+
+.curso-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.curso-card-head h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.curso-card-head small {
+  color: var(--texto-2);
+  font-size: 12px;
+}
+
+.curso-prom {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.curso-notas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nota-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--fondo);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 13px;
+}
+
+.nota-pill strong {
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .notas-cursos {
+    grid-template-columns: 1fr;
+  }
+}

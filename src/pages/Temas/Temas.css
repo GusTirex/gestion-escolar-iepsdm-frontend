@@ -1,0 +1,111 @@
+.semana-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 18px;
+}
+
+.semana-head h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.semana-rango {
+  color: var(--texto-2);
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.badge.actual {
+  background: var(--azul-bg);
+  color: var(--azul);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.temas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tema-card {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 20px;
+  box-shadow: var(--sombra);
+}
+
+.tema-head {
+  display: flex;
+  gap: 14px;
+}
+
+.tema-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--azul-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.tema-curso {
+  color: var(--azul);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tema-head h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.tema-head p {
+  color: var(--texto-2);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.materiales-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 16px 0 10px;
+}
+
+.materiales {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.material {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: var(--fondo);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.material-icon {
+  font-size: 15px;
+}
+
+.material-nombre {
+  flex: 1;
+  font-weight: 500;
+}
+
+.material-detalle {
+  color: var(--texto-2);
+  font-size: 12px;
+}
