@@ -20,13 +20,13 @@ function Login() {
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  const entrar = async (nombreUsuario) => {
+  const entrar = async (nombreUsuario, clave) => {
     setError("");
     setCargando(true);
     try {
-      const user = await loginApi(nombreUsuario);
+      const user = await loginApi(nombreUsuario, clave);
       if (!user) {
-        setError("Usuario no encontrado. Revisa tus credenciales.");
+        setError("Usuario o contraseña incorrectos.");
         return;
       }
       iniciarSesion(user);
@@ -40,8 +40,11 @@ function Login() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!usuario.trim()) return;
-    entrar(usuario.trim());
+    if (!usuario.trim() || !password) {
+      setError("Ingresa tu usuario y contraseña.");
+      return;
+    }
+    entrar(usuario.trim(), password);
   };
 
   return (
@@ -85,10 +88,10 @@ function Login() {
         </form>
 
         <div className="login-demo">
-          <span>Acceso rápido (demo):</span>
+          <span>Acceso rápido (demo · contraseña 123456):</span>
           <div className="login-demo-grid">
             {DEMO.map((d) => (
-              <button key={d.usuario} className="demo-btn" disabled={cargando} onClick={() => entrar(d.usuario)}>
+              <button key={d.usuario} className="demo-btn" disabled={cargando} onClick={() => entrar(d.usuario, "123456")}>
                 <span className="demo-ic">{d.icon}</span>
                 {d.rol}
               </button>

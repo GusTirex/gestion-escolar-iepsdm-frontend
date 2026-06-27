@@ -41,36 +41,19 @@ export async function crearAsistencia(payload) {
   return data;
 }
 
-// ---- Autenticacion (provisional: contra los usuarios sembrados) ----
-// El backend aun no expone /auth/login. Cuando exista, se reemplaza esto.
-// Respaldo por si /roles no responde. Coincide con el dataset oficial del equipo.
-const ROL_BY_ID = { 1: "ESTUDIANTE", 2: "DOCENTE", 3: "ADMIN", 4: "PADRE" };
-
-export async function login(usuario) {
-  const [usuarios, roles, estudiantes, docentes, padres] = await Promise.all([
-    getUsuarios(), getRoles(), getEstudiantes(), getDocentes(), getPadres(),
-  ]);
-  const u = usuarios.find((x) => (x.usuario || "").toLowerCase() === usuario.toLowerCase());
-  if (!u) return null;
-
-  const rol = roles.find((r) => r.idRol === u.idRol)?.rol || ROL_BY_ID[u.idRol] || "ESTUDIANTE";
-  let idEntidad = null;
-  let nombre = u.usuario;
-
-  if (rol === "ESTUDIANTE") {
-    const e = estudiantes.find((x) => x.idUsuario === u.idUsuario);
-    if (e) { idEntidad = e.idEstudiante; nombre = `${e.nombres} ${e.apellidos}`; }
-  } else if (rol === "DOCENTE") {
-    const d = docentes.find((x) => x.idUsuario === u.idUsuario);
-    if (d) { idEntidad = d.idDocente; nombre = `${d.nombres} ${d.apellidos}`; }
-  } else if (rol === "PADRE") {
-    const p = padres.find((x) => x.idUsuario === u.idUsuario);
-    if (p) { idEntidad = p.idPadre; nombre = `${p.nombres} ${p.apellidos}`; }
-  } else {
-    nombre = "Administrador";
+// ---- Autenticacion (endpoint real del backend: POST /auth/login) ----
+// Devuelve el usuario { idUsuario, usuario, email, rol, nombre, idEntidad }
+// o null si las credenciales son invalidas. Lanza si hay error de red/servidor.
+export async function login(usuario, password) {
+  try {
+    const { data } = await api.post("/auth/login", { usuario, password });
+    return data;
+  } catch (e) {
+    if (e.response && e.response.status >= 400 && e.response.status < 500) {
+      return null; // credenciales invalidas o datos incompletos
+    }
+    throw e; // error de red o del servidor
   }
-
-  return { idUsuario: u.idUsuario, usuario: u.usuario, rol, nombre, idEntidad };
 }
 
 // ---- Cursos que dicta un docente ----
