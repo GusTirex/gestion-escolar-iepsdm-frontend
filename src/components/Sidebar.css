@@ -1,0 +1,137 @@
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--linea);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand h2 {
+  color: var(--azul);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.brand p {
+  color: var(--texto-2);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.menu {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  color: var(--texto-2);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.menu-item:hover {
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+.menu-item.active {
+  background: var(--azul-bg);
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.menu-icon {
+  font-size: 16px;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--linea);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-info strong {
+  font-size: 13px;
+}
+
+.user-info span {
+  font-size: 11px;
+  color: var(--texto-2);
+}
+
+.logout-btn {
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid var(--linea);
+  background: var(--panel);
+  color: var(--texto-2);
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+
+.logout-btn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+    padding: 16px 8px;
+  }
+  .brand p,
+  .menu-item span:not(.menu-icon),
+  .user-info {
+    display: none;
+  }
+  .menu-item {
+    justify-content: center;
+  }
+  .brand h2 {
+    font-size: 0;
+  }
+  .brand h2::first-letter {
+    font-size: 22px;
+  }
+}
