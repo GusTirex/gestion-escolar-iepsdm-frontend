@@ -1,8 +1,8 @@
 import api from "./client";
 
 // ---- Chatbot IA (Gemini en el backend) ----
-export async function enviarMensajeChat(mensaje, alumnoId = 1) {
-  const { data } = await api.post("/chat", { alumnoId, mensaje });
+export async function enviarMensajeChat(payload) {
+  const { data } = await api.post("/chat", payload);
   return data; // { respuesta: "..." }
 }
 

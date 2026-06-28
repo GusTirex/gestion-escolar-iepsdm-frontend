@@ -12,7 +12,7 @@ function Layout() {
       <main className="layout-content">
         <Outlet />
       </main>
-      {user?.rol === "ESTUDIANTE" && <ChatWidget />}
+      {["ESTUDIANTE", "DOCENTE", "PADRE", "ADMIN"].includes(user?.rol) && <ChatWidget />}
     </div>
   );
 }

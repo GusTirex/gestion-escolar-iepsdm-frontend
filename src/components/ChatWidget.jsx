@@ -1,18 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { enviarMensajeChat } from "../api/services";
+import { useAuth } from "../auth/AuthContext";
 import "./ChatWidget.css";
 
 function ChatWidget() {
+  const { user } = useAuth();
+
   const [abierto, setAbierto] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [cargando, setCargando] = useState(false);
   const [mensajes, setMensajes] = useState([
     {
       tipo: "bot",
-      texto:
-        "Hola Juan, soy tu asistente IA. Pregúntame sobre cursos, tareas, notas o asistencia.",
+      texto: `Hola ${user?.nombre || "usuario"}, soy tu asistente IA. Pregúntame sobre cursos, tareas, notas o asistencia.`,
     },
   ]);
+
   const bodyRef = useRef(null);
 
   useEffect(() => {
@@ -23,18 +26,31 @@ function ChatWidget() {
 
   const enviar = async () => {
     if (!mensaje.trim() || cargando) return;
+
     const pregunta = mensaje;
+
     setMensajes((prev) => [...prev, { tipo: "user", texto: pregunta }]);
     setMensaje("");
     setCargando(true);
 
     try {
-      const data = await enviarMensajeChat(pregunta);
+      const data = await enviarMensajeChat({
+        mensaje: pregunta,
+        usuarioId: user?.idUsuario,
+        rol: user?.rol,
+        idEntidad: user?.idEntidad,
+      });
+
       setMensajes((prev) => [
         ...prev,
-        { tipo: "bot", texto: data.respuesta || "No recibí respuesta del servidor." },
+        {
+          tipo: "bot",
+          texto: data.respuesta || "No recibí respuesta del servidor.",
+        },
       ]);
-    } catch {
+    } catch (error) {
+      console.error("Error en chat:", error);
+
       setMensajes((prev) => [
         ...prev,
         {
@@ -66,7 +82,9 @@ function ChatWidget() {
                 {msg.texto}
               </div>
             ))}
-            {cargando && <div className="chat-message bot">Pensando respuesta...</div>}
+            {cargando && (
+              <div className="chat-message bot">Pensando respuesta...</div>
+            )}
           </div>
 
           <div className="chat-input">
