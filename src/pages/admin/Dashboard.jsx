@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import AppIcon from "../../components/AppIcon";
 import {
   getEstudiantes, getDocentes, getCursos, getUsuarios, getPadres, getAnuncios,
 } from "../../api/services";
@@ -17,10 +18,10 @@ function AdminDashboard() {
   }, []);
 
   const stats = [
-    { lbl: "Estudiantes", val: c.est, ic: "🎓" },
-    { lbl: "Docentes", val: c.doc, ic: "👩‍🏫" },
-    { lbl: "Cursos", val: c.cur, ic: "📚" },
-    { lbl: "Padres", val: c.pad, ic: "👨‍👩‍👦" },
+    { lbl: "Estudiantes", val: c.est, ic: "graduation" },
+    { lbl: "Docentes", val: c.doc, ic: "users" },
+    { lbl: "Cursos", val: c.cur, ic: "book" },
+    { lbl: "Padres", val: c.pad, ic: "users" },
   ];
 
   return (
@@ -37,7 +38,7 @@ function AdminDashboard() {
               <p className="lbl">{s.lbl}</p>
               <h3 className="val">{s.val}</h3>
             </div>
-            <span className="ic">{s.ic}</span>
+            <span className="ic"><AppIcon name={s.ic} size={18} /></span>
           </div>
         ))}
       </section>

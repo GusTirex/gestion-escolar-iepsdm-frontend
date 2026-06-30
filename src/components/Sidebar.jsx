@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import AppIcon from "./AppIcon";
 import "./Sidebar.css";
 
 const MENUS = {
@@ -7,37 +8,37 @@ const MENUS = {
     subtitulo: "Portal del Estudiante",
     rolLabel: "Estudiante",
     items: [
-      { to: "/estudiante", label: "Inicio", icon: "🏠", end: true },
-      { to: "/estudiante/notas", label: "Notas", icon: "📘" },
-      { to: "/estudiante/trabajos", label: "Trabajos", icon: "📄" },
-      { to: "/estudiante/temas", label: "Temas Semanales", icon: "📅" },
+      { to: "/estudiante", label: "Inicio", icon: "home", end: true },
+      { to: "/estudiante/notas", label: "Notas", icon: "book" },
+      { to: "/estudiante/trabajos", label: "Trabajos", icon: "file" },
+      { to: "/estudiante/temas", label: "Temas Semanales", icon: "calendar" },
     ],
   },
   DOCENTE: {
     subtitulo: "Portal del Docente",
     rolLabel: "Docente",
     items: [
-      { to: "/docente", label: "Inicio", icon: "🏠", end: true },
-      { to: "/docente/cursos", label: "Mis Cursos", icon: "📚" },
-      { to: "/docente/notas", label: "Registrar Notas", icon: "📝" },
-      { to: "/docente/asistencia", label: "Asistencia", icon: "✅" },
+      { to: "/docente", label: "Inicio", icon: "home", end: true },
+      { to: "/docente/cursos", label: "Mis Cursos", icon: "book" },
+      { to: "/docente/notas", label: "Registrar Notas", icon: "clipboard" },
+      { to: "/docente/asistencia", label: "Asistencia", icon: "check" },
     ],
   },
   PADRE: {
     subtitulo: "Portal del Padre",
     rolLabel: "Padre de familia",
     items: [
-      { to: "/padre", label: "Inicio", icon: "🏠", end: true },
-      { to: "/padre/notas", label: "Notas de mi hijo", icon: "📘" },
-      { to: "/padre/asistencia", label: "Asistencia", icon: "✅" },
+      { to: "/padre", label: "Inicio", icon: "home", end: true },
+      { to: "/padre/notas", label: "Notas de mi hijo", icon: "book" },
+      { to: "/padre/asistencia", label: "Asistencia", icon: "check" },
     ],
   },
   ADMIN: {
     subtitulo: "Administración",
     rolLabel: "Administrador",
     items: [
-      { to: "/admin", label: "Inicio", icon: "🏠", end: true },
-      { to: "/admin/gestion", label: "Gestión", icon: "🗂️" },
+      { to: "/admin", label: "Inicio", icon: "home", end: true },
+      { to: "/admin/gestion", label: "Gestión", icon: "settings" },
     ],
   },
 };
@@ -71,7 +72,7 @@ function Sidebar() {
             end={it.end}
             className={({ isActive }) => (isActive ? "menu-item active" : "menu-item")}
           >
-            <span className="menu-icon">{it.icon}</span>
+              <span className="menu-icon"><AppIcon name={it.icon} size={17} /></span>
             {it.label}
           </NavLink>
         ))}

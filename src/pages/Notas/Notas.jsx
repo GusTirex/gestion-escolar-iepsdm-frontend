@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDatosAcademicos } from "../../api/services";
+import AppIcon from "../../components/AppIcon";
 import "./Notas.css";
 
 const FALLBACK = {
@@ -41,7 +42,7 @@ function Notas() {
           <p>Promedio General</p>
           <h2>{data.promedio ? data.promedio.toFixed(1) : "—"}</h2>
         </div>
-        <span className="promedio-icon">📊</span>
+        <span className="promedio-icon"><AppIcon name="chart" size={30} /></span>
       </div>
 
       <div className="notas-cursos">

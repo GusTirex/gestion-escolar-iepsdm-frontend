@@ -2,14 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, HOME_BY_ROLE } from "../../auth/AuthContext";
 import { login as loginApi } from "../../api/services";
+import AppIcon from "../../components/AppIcon";
 import "./Login.css";
 
 // Accesos rapidos a las cuentas sembradas (demo).
 const DEMO = [
-  { usuario: "juanperez", rol: "Estudiante", icon: "🎓" },
-  { usuario: "carlosramos", rol: "Docente", icon: "📚" },
-  { usuario: "padrejuan", rol: "Padre", icon: "👨‍👩‍👦" },
-  { usuario: "admin", rol: "Admin", icon: "🛠️" },
+  { usuario: "juanperez", rol: "Estudiante", icon: "graduation" },
+  { usuario: "carlosramos", rol: "Docente", icon: "book" },
+  { usuario: "padrejuan", rol: "Padre", icon: "users" },
+  { usuario: "admin", rol: "Admin", icon: "settings" },
 ];
 
 function Login() {
@@ -92,7 +93,7 @@ function Login() {
           <div className="login-demo-grid">
             {DEMO.map((d) => (
               <button key={d.usuario} className="demo-btn" disabled={cargando} onClick={() => entrar(d.usuario, "123456")}>
-                <span className="demo-ic">{d.icon}</span>
+                <span className="demo-ic"><AppIcon name={d.icon} size={16} /></span>
                 {d.rol}
               </button>
             ))}

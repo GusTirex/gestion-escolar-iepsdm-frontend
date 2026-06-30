@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getDatosAcademicos } from "../../api/services";
+import AppIcon from "../../components/AppIcon";
 import "./Inicio.css";
 
 // Datos de respaldo (si el backend esta apagado, la UI no queda vacia).
@@ -31,10 +32,10 @@ function Inicio() {
   }, []);
 
   const resumen = [
-    { label: "Promedio General", valor: data.promedio ? data.promedio.toFixed(1) : "—", icono: "📈", color: "#2563eb" },
-    { label: "Cursos Activos", valor: String(data.totalCursos), icono: "📖", color: "#16a34a" },
-    { label: "Trabajos Pendientes", valor: String(data.pendientesCount), icono: "📋", color: "#f59e0b" },
-    { label: "Asistencia", valor: `${data.asistenciaPct}%`, icono: "🟣", color: "#8b5cf6" },
+    { label: "Promedio General", valor: data.promedio ? data.promedio.toFixed(1) : "—", icono: "chart", color: "#2563eb" },
+    { label: "Cursos Activos", valor: String(data.totalCursos), icono: "book", color: "#16a34a" },
+    { label: "Trabajos Pendientes", valor: String(data.pendientesCount), icono: "clipboard", color: "#f59e0b" },
+    { label: "Asistencia", valor: `${data.asistenciaPct}%`, icono: "check", color: "#8b5cf6" },
   ];
 
   return (
@@ -52,7 +53,7 @@ function Inicio() {
               <h3 className="card-valor">{c.valor}</h3>
             </div>
             <span className="card-icono" style={{ background: `${c.color}1a`, color: c.color }}>
-              {c.icono}
+              <AppIcon name={c.icono} size={18} />
             </span>
           </div>
         ))}
@@ -64,10 +65,10 @@ function Inicio() {
             <h2>Próximos Trabajos</h2>
             <Link className="link-btn" to="/estudiante/trabajos">Ver todos</Link>
           </div>
-          {data.proximosTrabajos.length === 0 && <p className="vacio">No tienes trabajos pendientes 🎉</p>}
+          {data.proximosTrabajos.length === 0 && <p className="vacio">No tienes trabajos pendientes.</p>}
           {data.proximosTrabajos.map((t, i) => (
             <div className="row" key={i}>
-              <div className="row-icon naranja">📄</div>
+              <div className="row-icon naranja"><AppIcon name="file" size={18} /></div>
               <div className="row-main">
                 <h4>{t.titulo}</h4>
                 <p>{t.curso}</p>
@@ -86,7 +87,7 @@ function Inicio() {
           {data.calificaciones.length === 0 && <p className="vacio">Aún no hay calificaciones.</p>}
           {data.calificaciones.map((g, i) => (
             <div className="row" key={i}>
-              <div className="row-icon azul">📘</div>
+              <div className="row-icon azul"><AppIcon name="book" size={18} /></div>
               <div className="row-main">
                 <h4>{g.curso}</h4>
                 <p>{g.detalle}</p>

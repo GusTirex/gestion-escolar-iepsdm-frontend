@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AppIcon from "../../components/AppIcon";
 import { getEstudiantes, getDatosAcademicos, getAnuncios } from "../../api/services";
 
 function PadreDashboard() {
@@ -17,10 +18,10 @@ function PadreDashboard() {
   }, []);
 
   const stats = [
-    { lbl: "Promedio", val: data?.promedio ? data.promedio.toFixed(1) : "—", ic: "📈" },
-    { lbl: "Asistencia", val: data ? `${data.asistenciaPct}%` : "—", ic: "✅" },
-    { lbl: "Pendientes", val: data ? data.pendientesCount : "—", ic: "📋" },
-    { lbl: "Cursos", val: data ? data.totalCursos : "—", ic: "📚" },
+    { lbl: "Promedio", val: data?.promedio ? data.promedio.toFixed(1) : "—", ic: "chart" },
+    { lbl: "Asistencia", val: data ? `${data.asistenciaPct}%` : "—", ic: "check" },
+    { lbl: "Pendientes", val: data ? data.pendientesCount : "—", ic: "clipboard" },
+    { lbl: "Cursos", val: data ? data.totalCursos : "—", ic: "book" },
   ];
 
   return (
@@ -37,7 +38,7 @@ function PadreDashboard() {
               <p className="lbl">{s.lbl}</p>
               <h3 className="val">{s.val}</h3>
             </div>
-            <span className="ic">{s.ic}</span>
+            <span className="ic"><AppIcon name={s.ic} size={18} /></span>
           </div>
         ))}
       </section>

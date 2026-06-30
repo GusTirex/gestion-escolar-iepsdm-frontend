@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import AppIcon from "../../components/AppIcon";
 import { getCursosDeDocente, getEstudiantes, getEvaluaciones } from "../../api/services";
 
 function DocenteDashboard() {
@@ -16,10 +17,10 @@ function DocenteDashboard() {
   }, [user.idEntidad]);
 
   const stats = [
-    { lbl: "Mis Cursos", val: cursos.length, ic: "📚" },
-    { lbl: "Estudiantes", val: estudiantes, ic: "🎓" },
-    { lbl: "Evaluaciones", val: evaluaciones, ic: "📝" },
-    { lbl: "Secciones", val: new Set(cursos.map((c) => c.idSeccion)).size, ic: "🏫" },
+    { lbl: "Mis Cursos", val: cursos.length, ic: "book" },
+    { lbl: "Estudiantes", val: estudiantes, ic: "graduation" },
+    { lbl: "Evaluaciones", val: evaluaciones, ic: "clipboard" },
+    { lbl: "Secciones", val: new Set(cursos.map((c) => c.idSeccion)).size, ic: "school" },
   ];
 
   return (
@@ -36,7 +37,7 @@ function DocenteDashboard() {
               <p className="lbl">{s.lbl}</p>
               <h3 className="val">{s.val}</h3>
             </div>
-            <span className="ic">{s.ic}</span>
+            <span className="ic"><AppIcon name={s.ic} size={18} /></span>
           </div>
         ))}
       </section>

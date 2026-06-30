@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getDatosAcademicos } from "../../api/services";
+import AppIcon from "../../components/AppIcon";
 import "./Trabajos.css";
 
 const FALLBACK = {
@@ -86,7 +87,7 @@ function Trabajos() {
         )}
         {lista.map((t, i) => (
           <div className="trabajo-card" key={keyOf(t) + i}>
-            <div className="trabajo-icon">📄</div>
+            <div className="trabajo-icon"><AppIcon name="file" size={22} /></div>
             <div className="trabajo-main">
               <div className="trabajo-top">
                 <h3>{t.titulo}</h3>
@@ -100,9 +101,9 @@ function Trabajos() {
               </div>
               <p className="trabajo-curso">{t.curso}</p>
               <div className="trabajo-meta">
-                <span>📅 Vence: {t.vence}</span>
+                <span><AppIcon name="calendar" size={14} /> Vence: {t.vence}</span>
                 {esPend ? (
-                  <span className="restantes">⏱ {t.restantes}</span>
+                  <span className="restantes"><AppIcon name="clock" size={14} /> {t.restantes}</span>
                 ) : t.enRevision ? (
                   <span className="revision-txt">Entregado · pendiente de calificación</span>
                 ) : (
