@@ -4,39 +4,26 @@ import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Inicio.css";
 
-// Datos de respaldo (si el backend esta apagado, la UI no queda vacia).
-const FALLBACK = {
-  promedio: 16.8,
-  totalCursos: 6,
-  pendientesCount: 3,
-  asistenciaPct: 92,
-  proximosTrabajos: [
-    { titulo: "Ensayo de Historia", curso: "Historia Universal", vence: "29 de mayo" },
-    { titulo: "Proyecto Final de Programación", curso: "Programación Web", vence: "1 de junio" },
-    { titulo: "Tarea de Matemáticas", curso: "Cálculo I", vence: "26 de mayo" },
-  ],
-  calificaciones: [
-    { curso: "Programación Web", detalle: "Tarea 3", nota: 18 },
-    { curso: "Cálculo I", detalle: "Examen Parcial", nota: 16 },
-    { curso: "Historia Universal", detalle: "Ensayo 2", nota: 17 },
-  ],
-};
-
 function Inicio() {
-  const [data, setData] = useState(FALLBACK);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getDatosAcademicos(1).then((d) => {
-      if (d.online) setData(d);
-    });
+    getDatosAcademicos(1)
+      .then((d) => (d.online ? setData(d) : setError(true)))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
-  const resumen = [
-    { label: "Promedio General", valor: data.promedio ? data.promedio.toFixed(1) : "—", icono: "chart", color: "#2563eb" },
-    { label: "Cursos Activos", valor: String(data.totalCursos), icono: "book", color: "#16a34a" },
-    { label: "Trabajos Pendientes", valor: String(data.pendientesCount), icono: "clipboard", color: "#f59e0b" },
-    { label: "Asistencia", valor: `${data.asistenciaPct}%`, icono: "check", color: "#8b5cf6" },
-  ];
+  const resumen = data
+    ? [
+        { label: "Promedio General", valor: data.promedio ? data.promedio.toFixed(1) : "—", icono: "chart", color: "#2563eb" },
+        { label: "Cursos Activos", valor: String(data.totalCursos), icono: "book", color: "#16a34a" },
+        { label: "Trabajos Pendientes", valor: String(data.pendientesCount), icono: "clipboard", color: "#f59e0b" },
+        { label: "Asistencia", valor: `${data.asistenciaPct}%`, icono: "check", color: "#8b5cf6" },
+      ]
+    : [];
 
   return (
     <div className="inicio">
@@ -45,6 +32,12 @@ function Inicio() {
         <p>Aquí está tu resumen académico</p>
       </header>
 
+      {loading && <div className="loader" />}
+      {!loading && error && (
+        <p className="estado-error">No se pudieron cargar tus datos. Verifica tu conexión e intenta de nuevo.</p>
+      )}
+      {!loading && data && (
+      <>
       <section className="cards">
         {resumen.map((c) => (
           <div className="card" key={c.label}>
@@ -99,6 +92,8 @@ function Inicio() {
           ))}
         </div>
       </section>
+      </>
+      )}
     </div>
   );
 }

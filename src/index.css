@@ -66,6 +66,35 @@ button {
   padding: 14px 0;
 }
 
+/* Estado de carga (spinner) y error */
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+.loader::after {
+  content: "";
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--linea);
+  border-top-color: var(--azul);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.estado-error {
+  margin: 30px 0;
+  padding: 16px 18px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
 /* ===== Componentes compartidos entre portales ===== */
 .stat-grid {
   display: grid;

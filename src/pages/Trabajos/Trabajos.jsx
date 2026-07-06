@@ -3,17 +3,6 @@ import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Trabajos.css";
 
-const FALLBACK = {
-  trabajosPendientes: [
-    { titulo: "Tarea de Derivadas", curso: "Cálculo I", vence: "1 de julio de 2026", restantes: "4 días restantes" },
-    { titulo: "Ensayo Revolución Industrial", curso: "Historia Universal", vence: "4 de julio de 2026", restantes: "7 días restantes" },
-    { titulo: "Proyecto Final - Aplicación Web", curso: "Programación Web", vence: "10 de julio de 2026", restantes: "13 días restantes" },
-  ],
-  trabajosCompletados: [
-    { titulo: "Tarea 3", curso: "Programación Web", vence: "10 de mayo de 2026", nota: 18 },
-  ],
-};
-
 const STORAGE_KEY = "iepsdm_entregados_1";
 const keyOf = (t) => `${t.titulo}|${t.curso}`;
 
@@ -26,16 +15,19 @@ function cargarEntregados() {
 }
 
 function Trabajos() {
-  const [data, setData] = useState(FALLBACK);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [tab, setTab] = useState("pendientes");
   const [entregados, setEntregados] = useState(cargarEntregados);
   const [toast, setToast] = useState("");
   const toastTimer = useRef(null);
 
   useEffect(() => {
-    getDatosAcademicos(1).then((d) => {
-      if (d.online) setData(d);
-    });
+    getDatosAcademicos(1)
+      .then((d) => (d.online ? setData(d) : setError(true)))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   // Persiste las entregas para que NO se pierdan al navegar o recargar.
@@ -46,10 +38,10 @@ function Trabajos() {
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
   const entregadosKeys = new Set(entregados.map(keyOf));
-  const pendientes = data.trabajosPendientes.filter((t) => !entregadosKeys.has(keyOf(t)));
+  const pendientes = (data?.trabajosPendientes || []).filter((t) => !entregadosKeys.has(keyOf(t)));
   const completadas = [
     ...entregados.map((t) => ({ ...t, enRevision: true })),
-    ...data.trabajosCompletados,
+    ...(data?.trabajosCompletados || []),
   ];
 
   const entregar = (t) => {
@@ -70,6 +62,12 @@ function Trabajos() {
         <p>Gestiona tus tareas y entregas</p>
       </header>
 
+      {loading && <div className="loader" />}
+      {!loading && error && (
+        <p className="estado-error">No se pudieron cargar tus trabajos. Verifica tu conexión.</p>
+      )}
+      {!loading && data && (
+      <>
       <div className="tabs">
         <button className={esPend ? "tab active" : "tab"} onClick={() => setTab("pendientes")}>
           Pendientes ({pendientes.length})
@@ -119,6 +117,8 @@ function Trabajos() {
           </div>
         ))}
       </div>
+      </>
+      )}
 
       {toast && <div className="toast">{toast}</div>}
     </div>

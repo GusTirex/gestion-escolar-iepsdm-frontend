@@ -3,18 +3,6 @@ import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Notas.css";
 
-const FALLBACK = {
-  promedio: 16.8,
-  notasPorCurso: [
-    { curso: "Programación Web", docente: "Walter Ramos", promedio: 17.5,
-      items: [{ evaluacion: "Tarea 3", nota: 18 }, { evaluacion: "Examen Parcial", nota: 17 }] },
-    { curso: "Cálculo I", docente: "María Torres", promedio: 16,
-      items: [{ evaluacion: "Examen Parcial", nota: 16 }] },
-    { curso: "Historia Universal", docente: "Juan Briam", promedio: 17,
-      items: [{ evaluacion: "Ensayo 2", nota: 17 }] },
-  ],
-};
-
 function color(nota) {
   if (nota >= 17) return "var(--verde)";
   if (nota >= 13) return "var(--azul)";
@@ -22,12 +10,15 @@ function color(nota) {
 }
 
 function Notas() {
-  const [data, setData] = useState(FALLBACK);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getDatosAcademicos(1).then((d) => {
-      if (d.online) setData(d);
-    });
+    getDatosAcademicos(1)
+      .then((d) => (d.online ? setData(d) : setError(true)))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -37,6 +28,12 @@ function Notas() {
         <p>Tu rendimiento académico por curso</p>
       </header>
 
+      {loading && <div className="loader" />}
+      {!loading && error && (
+        <p className="estado-error">No se pudieron cargar tus notas. Verifica tu conexión.</p>
+      )}
+      {!loading && data && (
+      <>
       <div className="promedio-banner">
         <div>
           <p>Promedio General</p>
@@ -71,6 +68,8 @@ function Notas() {
           </div>
         ))}
       </div>
+      </>
+      )}
     </div>
   );
 }
