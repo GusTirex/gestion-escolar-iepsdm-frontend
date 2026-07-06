@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { getEstudiantes, getAsistencias } from "../../api/services";
+import { useAuth } from "../../auth/AuthContext";
+import { getHijosDePadre, getAsistencias } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 
 function PadreAsistencia() {
+  const { user } = useAuth();
   const [hijo, setHijo] = useState(null);
   const [asistencias, setAsistencias] = useState([]);
 
   useEffect(() => {
-    getEstudiantes().then((es) => {
-      const h = es.find((e) => e.idEstudiante === 1) || es[0];
+    getHijosDePadre(user.idEntidad).then((hijos) => {
+      const h = hijos[0];
       setHijo(h);
       if (h)
         getAsistencias().then((a) =>
@@ -19,7 +21,7 @@ function PadreAsistencia() {
           )
         );
     });
-  }, []);
+  }, [user.idEntidad]);
 
   const total = asistencias.length;
   const presentes = asistencias.filter((a) => a.estado).length;

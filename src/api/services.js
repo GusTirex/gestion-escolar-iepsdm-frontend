@@ -28,6 +28,8 @@ export const getAnuncios = () => safeGet("/anuncios");
 export const getUsuarios = () => safeGet("/usuarios");
 export const getRoles = () => safeGet("/roles");
 export const getPadres = () => safeGet("/padres");
+// Hijos vinculados a un padre (relación real estudiantes_padres)
+export const getHijosDePadre = (idPadre) => safeGet(`/padres/${idPadre}/hijos`);
 export const getMatriculas = () => safeGet("/matriculas");
 export const getSecciones = () => safeGet("/secciones");
 

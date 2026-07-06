@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { enviarMensajeChat } from "../api/services";
 import { useAuth } from "../auth/AuthContext";
 import "./ChatWidget.css";
@@ -79,7 +80,11 @@ function ChatWidget() {
           <div className="chat-body" ref={bodyRef}>
             {mensajes.map((msg, i) => (
               <div key={i} className={`chat-message ${msg.tipo}`}>
-                {msg.texto}
+                {msg.tipo === "bot" ? (
+                  <div className="md"><ReactMarkdown>{msg.texto}</ReactMarkdown></div>
+                ) : (
+                  msg.texto
+                )}
               </div>
             ))}
             {cargando && (

@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import AppIcon from "../../components/AppIcon";
-import { getEstudiantes, getDatosAcademicos, getAnuncios } from "../../api/services";
+import { useAuth } from "../../auth/AuthContext";
+import { getHijosDePadre, getDatosAcademicos, getAnuncios } from "../../api/services";
 
 function PadreDashboard() {
+  const { user } = useAuth();
   const [hijo, setHijo] = useState(null);
   const [data, setData] = useState(null);
   const [anuncios, setAnuncios] = useState([]);
 
   useEffect(() => {
-    // Demo: el hijo es el estudiante sembrado. Con relacion padre-hijo real se filtra por el padre.
-    getEstudiantes().then((es) => {
-      const h = es.find((e) => e.idEstudiante === 1) || es[0];
+    // Hijo real vinculado al padre (relación estudiantes_padres).
+    getHijosDePadre(user.idEntidad).then((hijos) => {
+      const h = hijos[0];
       setHijo(h);
       if (h) getDatosAcademicos(h.idEstudiante).then(setData);
     });
     getAnuncios().then(setAnuncios);
-  }, []);
+  }, [user.idEntidad]);
 
   const stats = [
     { lbl: "Promedio", val: data?.promedio ? data.promedio.toFixed(1) : "—", ic: "chart" },

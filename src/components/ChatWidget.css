@@ -114,3 +114,20 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Markdown en las respuestas del bot */
+.chat-message .md p { margin: 0 0 6px; }
+.chat-message .md p:last-child { margin-bottom: 0; }
+.chat-message .md ul,
+.chat-message .md ol { margin: 4px 0 6px; padding-left: 18px; }
+.chat-message .md li { margin: 2px 0; }
+.chat-message .md strong { font-weight: 700; }
+.chat-message .md h1,
+.chat-message .md h2,
+.chat-message .md h3 { font-size: 14px; margin: 6px 0 4px; }
+.chat-message .md code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+}

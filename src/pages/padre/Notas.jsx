@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getEstudiantes, getDatosAcademicos } from "../../api/services";
+import { useAuth } from "../../auth/AuthContext";
+import { getHijosDePadre, getDatosAcademicos } from "../../api/services";
 
 function color(nota) {
   if (nota >= 17) return "var(--verde)";
@@ -8,16 +9,17 @@ function color(nota) {
 }
 
 function PadreNotas() {
+  const { user } = useAuth();
   const [hijo, setHijo] = useState(null);
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    getEstudiantes().then((es) => {
-      const h = es.find((e) => e.idEstudiante === 1) || es[0];
+    getHijosDePadre(user.idEntidad).then((hijos) => {
+      const h = hijos[0];
       setHijo(h);
       if (h) getDatosAcademicos(h.idEstudiante).then(setData);
     });
-  }, []);
+  }, [user.idEntidad]);
 
   return (
     <div>
