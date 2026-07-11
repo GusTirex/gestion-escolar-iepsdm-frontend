@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Inicio.css";
 
 function Inicio() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    getDatosAcademicos(1)
+    getDatosAcademicos(user.idEntidad)
       .then((d) => (d.online ? setData(d) : setError(true)))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user.idEntidad]);
 
   const resumen = data
     ? [
@@ -28,7 +30,7 @@ function Inicio() {
   return (
     <div className="inicio">
       <header className="page-head">
-        <h1>Bienvenido de nuevo, Juan</h1>
+        <h1>Bienvenido de nuevo, {user.nombre?.split(" ")[0] || "estudiante"}</h1>
         <p>Aquí está tu resumen académico</p>
       </header>
 

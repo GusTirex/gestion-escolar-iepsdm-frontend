@@ -1,39 +1,41 @@
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../../auth/AuthContext";
 import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Trabajos.css";
 
-const STORAGE_KEY = "iepsdm_entregados_1";
 const keyOf = (t) => `${t.titulo}|${t.curso}`;
 
-function cargarEntregados() {
+function cargarEntregados(storageKey) {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
   } catch {
     return [];
   }
 }
 
 function Trabajos() {
+  const { user } = useAuth();
+  const storageKey = `iepsdm_entregados_${user.idEntidad}`;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [tab, setTab] = useState("pendientes");
-  const [entregados, setEntregados] = useState(cargarEntregados);
+  const [entregados, setEntregados] = useState(() => cargarEntregados(storageKey));
   const [toast, setToast] = useState("");
   const toastTimer = useRef(null);
 
   useEffect(() => {
-    getDatosAcademicos(1)
+    getDatosAcademicos(user.idEntidad)
       .then((d) => (d.online ? setData(d) : setError(true)))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user.idEntidad]);
 
   // Persiste las entregas para que NO se pierdan al navegar o recargar.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entregados));
-  }, [entregados]);
+    localStorage.setItem(storageKey, JSON.stringify(entregados));
+  }, [storageKey, entregados]);
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 

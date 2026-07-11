@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../auth/AuthContext";
 import { getDatosAcademicos } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Notas.css";
@@ -10,16 +11,17 @@ function color(nota) {
 }
 
 function Notas() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    getDatosAcademicos(1)
+    getDatosAcademicos(user.idEntidad)
       .then((d) => (d.online ? setData(d) : setError(true)))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [user.idEntidad]);
 
   return (
     <div className="notas">
