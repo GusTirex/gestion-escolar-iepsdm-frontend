@@ -13,11 +13,9 @@ function PadreAsistencia() {
       const h = hijos[0];
       setHijo(h);
       if (h)
-        getAsistencias().then((a) =>
+        getAsistencias(h.idEstudiante).then((a) =>
           setAsistencias(
-            a
-              .filter((x) => x.idEstudiante === h.idEstudiante)
-              .sort((p, q) => (q.fecha || "").localeCompare(p.fecha || ""))
+            a.slice().sort((p, q) => (q.fecha || "").localeCompare(p.fecha || ""))
           )
         );
     });

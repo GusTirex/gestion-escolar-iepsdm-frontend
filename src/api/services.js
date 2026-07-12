@@ -21,9 +21,12 @@ export const getCursos = () => safeGet("/cursos");
 export const getEstudiantes = () => safeGet("/estudiantes");
 export const getDocentes = () => safeGet("/docentes");
 export const getDocentesCursos = () => safeGet("/docentes-cursos");
-export const getNotas = () => safeGet("/notas");
+// Si se pasa idEstudiante, el backend filtra en el servidor (no baja toda la tabla).
+export const getNotas = (idEstudiante) =>
+  safeGet(idEstudiante != null ? `/notas?idEstudiante=${idEstudiante}` : "/notas");
 export const getEvaluaciones = () => safeGet("/evaluaciones");
-export const getAsistencias = () => safeGet("/asistencias");
+export const getAsistencias = (idEstudiante) =>
+  safeGet(idEstudiante != null ? `/asistencias?idEstudiante=${idEstudiante}` : "/asistencias");
 export const getAnuncios = () => safeGet("/anuncios");
 export const getUsuarios = () => safeGet("/usuarios");
 export const getRoles = () => safeGet("/roles");
@@ -101,7 +104,7 @@ function diasRestantes(iso) {
 // Esta es la pieza que "enlaza todo": notas + evaluaciones + cursos + docentes + asistencias.
 export async function getDatosAcademicos(idEstudiante = 1) {
   const [cursos, notas, evaluaciones, asistencias, docentes, docCursos] = await Promise.all([
-    getCursos(), getNotas(), getEvaluaciones(), getAsistencias(), getDocentes(), getDocentesCursos(),
+    getCursos(), getNotas(idEstudiante), getEvaluaciones(), getAsistencias(idEstudiante), getDocentes(), getDocentesCursos(),
   ]);
 
   const cursoById = Object.fromEntries(cursos.map((c) => [c.idCurso, c]));
