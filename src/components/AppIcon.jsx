@@ -114,6 +114,13 @@ function AppIcon({ name, size = 18, className = "" }) {
           <path {...stroke} d="M6.5 11.2V16c0 1.7 2.5 3 5.5 3s5.5-1.3 5.5-3v-4.8" />
         </svg>
       );
+    case "bell":
+      return (
+        <svg {...common}>
+          <path {...stroke} d="M18 8a6 6 0 1 0-12 0c0 6-2 8-2 8h16s-2-2-2-8Z" />
+          <path {...stroke} d="M10.5 20a1.8 1.8 0 0 0 3 0" />
+        </svg>
+      );
     case "settings":
       return (
         <svg {...common}>

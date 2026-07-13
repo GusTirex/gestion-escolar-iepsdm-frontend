@@ -61,6 +61,17 @@ export async function login(usuario, password) {
   }
 }
 
+// ---- Notificaciones dentro de la app ----
+export const getNotificaciones = (idUsuario) => safeGet(`/notificaciones?idUsuario=${idUsuario}`);
+
+export async function marcarTodasLeidas(idUsuario) {
+  try {
+    await api.put(`/notificaciones/leer-todas?idUsuario=${idUsuario}`);
+  } catch {
+    /* si falla, no rompe la UI */
+  }
+}
+
 // ---- Entrega de trabajos (real, guardada en la BD) ----
 export async function getEntregasEstudiante(idEstudiante) {
   const entregas = await safeGet(`/entregas?idEstudiante=${idEstudiante}`);
