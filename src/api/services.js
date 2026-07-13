@@ -61,6 +61,23 @@ export async function login(usuario, password) {
   }
 }
 
+// ---- Entrega de trabajos (real, guardada en la BD) ----
+export async function getEntregasEstudiante(idEstudiante) {
+  const entregas = await safeGet(`/entregas?idEstudiante=${idEstudiante}`);
+  return entregas.map((e) => ({
+    idEvaluacion: e.idEvaluacion,
+    titulo: e.titulo,
+    curso: e.curso,
+    vence: fmtFecha(e.vence),
+    fechaEntrega: e.fechaEntrega,
+  }));
+}
+
+export async function crearEntrega(idEstudiante, idEvaluacion) {
+  const { data } = await api.post("/entregas", { idEstudiante, idEvaluacion });
+  return data;
+}
+
 // ---- Cursos que dicta un docente ----
 export async function getCursosDeDocente(idDocente) {
   const [cursos, docCursos] = await Promise.all([getCursos(), getDocentesCursos()]);
@@ -120,8 +137,8 @@ export async function getDatosAcademicos(idEstudiante = 1) {
     const ev = evalById[n.idEvaluacion] || {};
     const curso = cursoById[ev.idCurso] || {};
     return {
-      idNota: n.idNota, nota: n.nota, evaluacion: ev.nombre, fecha: ev.fecha,
-      idCurso: ev.idCurso, curso: curso.nombre || "Curso",
+      idNota: n.idNota, idEvaluacion: n.idEvaluacion, nota: n.nota, evaluacion: ev.nombre,
+      fecha: ev.fecha, idCurso: ev.idCurso, curso: curso.nombre || "Curso",
     };
   });
 
@@ -141,6 +158,7 @@ export async function getDatosAcademicos(idEstudiante = 1) {
     .map((e) => {
       const dias = diasRestantes(e.fecha);
       return {
+        idEvaluacion: e.idEvaluacion,
         titulo: e.nombre,
         curso: (cursoById[e.idCurso] || {}).nombre || "Curso",
         vence: fmtFecha(e.fecha),
@@ -151,7 +169,7 @@ export async function getDatosAcademicos(idEstudiante = 1) {
   const trabajosCompletados = notasFull
     .slice()
     .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""))
-    .map((n) => ({ titulo: n.evaluacion, curso: n.curso, vence: fmtFecha(n.fecha), nota: n.nota }));
+    .map((n) => ({ idEvaluacion: n.idEvaluacion, titulo: n.evaluacion, curso: n.curso, vence: fmtFecha(n.fecha), nota: n.nota }));
 
   const calificaciones = notasFull
     .slice()

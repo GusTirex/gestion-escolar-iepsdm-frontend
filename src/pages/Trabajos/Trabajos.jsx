@@ -1,55 +1,65 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { getDatosAcademicos } from "../../api/services";
+import { getDatosAcademicos, getEntregasEstudiante, crearEntrega } from "../../api/services";
 import AppIcon from "../../components/AppIcon";
 import "./Trabajos.css";
 
-const keyOf = (t) => `${t.titulo}|${t.curso}`;
-
-function cargarEntregados(storageKey) {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey)) || [];
-  } catch {
-    return [];
-  }
-}
-
 function Trabajos() {
   const { user } = useAuth();
-  const storageKey = `iepsdm_entregados_${user.idEntidad}`;
   const [data, setData] = useState(null);
+  const [entregas, setEntregas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [tab, setTab] = useState("pendientes");
-  const [entregados, setEntregados] = useState(() => cargarEntregados(storageKey));
+  const [enviando, setEnviando] = useState(null); // idEvaluacion que se esta entregando
   const [toast, setToast] = useState("");
   const toastTimer = useRef(null);
 
-  useEffect(() => {
-    getDatosAcademicos(user.idEntidad)
-      .then((d) => (d.online ? setData(d) : setError(true)))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [user.idEntidad]);
+  // Trae el resumen academico y las entregas ya registradas en la BD.
+  const cargar = () =>
+    Promise.all([getDatosAcademicos(user.idEntidad), getEntregasEstudiante(user.idEntidad)])
+      .then(([d, ents]) => {
+        if (d.online) {
+          setData(d);
+          setEntregas(ents);
+        } else {
+          setError(true);
+        }
+      })
+      .catch(() => setError(true));
 
-  // Persiste las entregas para que NO se pierdan al navegar o recargar.
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(entregados));
-  }, [storageKey, entregados]);
+    cargar().finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.idEntidad]);
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  const entregadosKeys = new Set(entregados.map(keyOf));
-  const pendientes = (data?.trabajosPendientes || []).filter((t) => !entregadosKeys.has(keyOf(t)));
-  const completadas = [
-    ...entregados.map((t) => ({ ...t, enRevision: true })),
-    ...(data?.trabajosCompletados || []),
-  ];
+  const entregadasIds = new Set(entregas.map((e) => e.idEvaluacion));
+  const calificadosIds = new Set((data?.trabajosCompletados || []).map((t) => t.idEvaluacion));
 
-  const entregar = (t) => {
-    if (entregadosKeys.has(keyOf(t))) return;
-    setEntregados((prev) => [...prev, { titulo: t.titulo, curso: t.curso, vence: t.vence }]);
-    setToast(`✓ "${t.titulo}" entregado correctamente`);
+  const pendientes = (data?.trabajosPendientes || []).filter((t) => !entregadasIds.has(t.idEvaluacion));
+  const enRevision = entregas
+    .filter((e) => !calificadosIds.has(e.idEvaluacion))
+    .map((e) => ({ ...e, enRevision: true }));
+  const completadas = [...enRevision, ...(data?.trabajosCompletados || [])];
+
+  const entregar = async (t) => {
+    if (entregadasIds.has(t.idEvaluacion) || enviando) return;
+    setEnviando(t.idEvaluacion);
+    try {
+      await crearEntrega(user.idEntidad, t.idEvaluacion);
+      await cargar();
+      mostrarToast(`✓ "${t.titulo}" entregado correctamente`);
+    } catch {
+      mostrarToast("No se pudo entregar. Intenta de nuevo.");
+    } finally {
+      setEnviando(null);
+    }
+  };
+
+  const mostrarToast = (msg) => {
+    setToast(msg);
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(""), 3000);
   };
@@ -86,7 +96,7 @@ function Trabajos() {
           </p>
         )}
         {lista.map((t, i) => (
-          <div className="trabajo-card" key={keyOf(t) + i}>
+          <div className="trabajo-card" key={(t.idEvaluacion ?? "x") + "-" + i}>
             <div className="trabajo-icon"><AppIcon name="file" size={22} /></div>
             <div className="trabajo-main">
               <div className="trabajo-top">
@@ -111,8 +121,12 @@ function Trabajos() {
                 )}
               </div>
               {esPend && (
-                <button className="btn-entregar" onClick={() => entregar(t)}>
-                  Entregar Trabajo
+                <button
+                  className="btn-entregar"
+                  disabled={enviando === t.idEvaluacion}
+                  onClick={() => entregar(t)}
+                >
+                  {enviando === t.idEvaluacion ? "Entregando..." : "Entregar Trabajo"}
                 </button>
               )}
             </div>
