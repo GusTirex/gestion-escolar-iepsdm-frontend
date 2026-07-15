@@ -84,6 +84,31 @@
   margin-left: auto;
 }
 
+/* Chips de preguntas sugeridas (solo al inicio de la conversacion) */
+.chat-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chip-sugerencia {
+  border: 1px solid var(--azul);
+  background: #eff4ff;
+  color: var(--azul);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  line-height: 1.2;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.chip-sugerencia:hover {
+  background: var(--azul);
+  color: #ffffff;
+}
+
 .chat-input {
   display: flex;
   gap: 8px;

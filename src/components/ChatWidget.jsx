@@ -4,6 +4,28 @@ import { enviarMensajeChat } from "../api/services";
 import { useAuth } from "../auth/AuthContext";
 import "./ChatWidget.css";
 
+// Preguntas de ejemplo segun el rol (usan lo que el asistente realmente sabe responder).
+const SUGERENCIAS = {
+  ESTUDIANTE: [
+    "¿Qué curso debo reforzar?",
+    "¿Tengo tareas pendientes?",
+    "¿Cómo va mi asistencia?",
+  ],
+  DOCENTE: [
+    "¿Qué alumnos tienen tareas pendientes?",
+    "¿Cómo va el rendimiento de mis cursos?",
+  ],
+  PADRE: [
+    "¿Cómo va mi hijo?",
+    "¿Tiene tareas pendientes?",
+    "¿Cómo está su asistencia?",
+  ],
+  ADMIN: [
+    "Dame un reporte general de tareas",
+    "¿Qué cursos tienen bajo promedio?",
+  ],
+};
+
 function ChatWidget() {
   const { user } = useAuth();
 
@@ -25,10 +47,11 @@ function ChatWidget() {
     }
   }, [mensajes, cargando, abierto]);
 
-  const enviar = async () => {
-    if (!mensaje.trim() || cargando) return;
-
-    const pregunta = mensaje;
+  // Envia una pregunta. Sin argumento usa lo escrito en el input;
+  // los chips de sugerencias pasan su texto directamente.
+  const enviar = async (textoDirecto) => {
+    const pregunta = (typeof textoDirecto === "string" ? textoDirecto : mensaje).trim();
+    if (!pregunta || cargando) return;
 
     setMensajes((prev) => [...prev, { tipo: "user", texto: pregunta }]);
     setMensaje("");
@@ -89,6 +112,16 @@ function ChatWidget() {
             ))}
             {cargando && (
               <div className="chat-message bot">Pensando respuesta...</div>
+            )}
+
+            {mensajes.length === 1 && !cargando && (SUGERENCIAS[user?.rol] || []).length > 0 && (
+              <div className="chat-sugerencias">
+                {(SUGERENCIAS[user?.rol] || []).map((q) => (
+                  <button key={q} className="chip-sugerencia" onClick={() => enviar(q)}>
+                    {q}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
