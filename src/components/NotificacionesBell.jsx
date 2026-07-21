@@ -28,7 +28,7 @@ function NotificacionesBell() {
 
   const cargar = () => {
     if (!idUsuario) return;
-    getNotificaciones(idUsuario).then(setItems);
+    getNotificaciones().then(setItems);
   };
 
   // Carga inicial y refresco cada 40 s para ver avisos nuevos.
@@ -55,7 +55,7 @@ function NotificacionesBell() {
     setAbierto(nuevo);
     // Al abrir, marca todas como leidas (en el server y en la vista).
     if (nuevo && noLeidas > 0) {
-      marcarTodasLeidas(idUsuario);
+      marcarTodasLeidas();
       setItems((prev) => prev.map((n) => ({ ...n, leida: true })));
     }
   };

@@ -62,11 +62,12 @@ export async function login(usuario, password) {
 }
 
 // ---- Notificaciones dentro de la app ----
-export const getNotificaciones = (idUsuario) => safeGet(`/notificaciones?idUsuario=${idUsuario}`);
+// El backend identifica al usuario por su token, no hace falta mandar el id.
+export const getNotificaciones = () => safeGet("/notificaciones");
 
-export async function marcarTodasLeidas(idUsuario) {
+export async function marcarTodasLeidas() {
   try {
-    await api.put(`/notificaciones/leer-todas?idUsuario=${idUsuario}`);
+    await api.put("/notificaciones/leer-todas");
   } catch {
     /* si falla, no rompe la UI */
   }
@@ -130,89 +131,50 @@ function diasRestantes(iso) {
 
 // Trae TODO el resumen academico de un estudiante, ya cruzado entre tablas.
 // Esta es la pieza que "enlaza todo": notas + evaluaciones + cursos + docentes + asistencias.
-export async function getDatosAcademicos(idEstudiante = 1) {
-  const [cursos, notas, evaluaciones, asistencias, docentes, docCursos] = await Promise.all([
-    getCursos(), getNotas(idEstudiante), getEvaluaciones(), getAsistencias(idEstudiante), getDocentes(), getDocentesCursos(),
-  ]);
+// El servidor ya devuelve el resumen calculado (una sola llamada).
+// Antes se descargaban tablas completas y se cruzaban aqui en el navegador.
+export async function getDatosAcademicos(idEstudiante) {
+  let r;
+  try {
+    const { data } = await api.get(`/estudiantes/${idEstudiante}/resumen`);
+    r = data;
+  } catch {
+    return { online: false };
+  }
 
-  const cursoById = Object.fromEntries(cursos.map((c) => [c.idCurso, c]));
-  const evalById = Object.fromEntries(evaluaciones.map((e) => [e.idEvaluacion, e]));
-  const docById = Object.fromEntries(docentes.map((d) => [d.idDocente, d]));
-  const docenteDeCurso = {};
-  docCursos.forEach((dc) => {
-    if (!docenteDeCurso[dc.idCurso]) docenteDeCurso[dc.idCurso] = docById[dc.idDocente];
-  });
-
-  const misNotas = notas.filter((n) => n.idEstudiante === idEstudiante);
-  const notasFull = misNotas.map((n) => {
-    const ev = evalById[n.idEvaluacion] || {};
-    const curso = cursoById[ev.idCurso] || {};
+  const conFecha = (t) => {
+    const dias = diasRestantes(t.vence);
     return {
-      idNota: n.idNota, idEvaluacion: n.idEvaluacion, nota: n.nota, evaluacion: ev.nombre,
-      fecha: ev.fecha, idCurso: ev.idCurso, curso: curso.nombre || "Curso",
+      idEvaluacion: t.idEvaluacion,
+      titulo: t.titulo,
+      curso: t.curso,
+      nota: t.nota,
+      vence: fmtFecha(t.vence),
+      restantes: dias != null ? (dias >= 0 ? `${dias} días restantes` : "Vencido") : "",
     };
-  });
+  };
 
-  const promedio = notasFull.length
-    ? notasFull.reduce((s, n) => s + n.nota, 0) / notasFull.length
-    : 0;
-
-  const misAsist = asistencias.filter((a) => a.idEstudiante === idEstudiante);
-  const presentes = misAsist.filter((a) => a.estado).length;
-  const asistenciaPct = misAsist.length ? Math.round((presentes / misAsist.length) * 100) : 0;
-
-  // Pendientes = evaluaciones sin nota del estudiante
-  const idsConNota = new Set(misNotas.map((n) => n.idEvaluacion));
-  const trabajosPendientes = evaluaciones
-    .filter((e) => !idsConNota.has(e.idEvaluacion))
-    .sort((a, b) => (a.fecha || "").localeCompare(b.fecha || ""))
-    .map((e) => {
-      const dias = diasRestantes(e.fecha);
-      return {
-        idEvaluacion: e.idEvaluacion,
-        titulo: e.nombre,
-        curso: (cursoById[e.idCurso] || {}).nombre || "Curso",
-        vence: fmtFecha(e.fecha),
-        restantes: dias != null ? (dias >= 0 ? `${dias} días restantes` : "Vencido") : "",
-      };
-    });
-
-  const trabajosCompletados = notasFull
-    .slice()
-    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""))
-    .map((n) => ({ idEvaluacion: n.idEvaluacion, titulo: n.evaluacion, curso: n.curso, vence: fmtFecha(n.fecha), nota: n.nota }));
-
-  const calificaciones = notasFull
-    .slice()
-    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""))
-    .slice(0, 4)
-    .map((n) => ({ curso: n.curso, detalle: n.evaluacion, nota: n.nota }));
-
-  const notasPorCurso = cursos
-    .map((c) => {
-      const items = notasFull.filter((n) => n.idCurso === c.idCurso);
-      const prom = items.length ? items.reduce((s, n) => s + n.nota, 0) / items.length : null;
-      const doc = docenteDeCurso[c.idCurso];
-      return {
-        curso: c.nombre,
-        docente: doc ? `${doc.nombres} ${doc.apellidos}` : "—",
-        items,
-        promedio: prom,
-      };
-    })
-    .filter((c) => c.items.length > 0);
+  const trabajosPendientes = (r.trabajosPendientes || []).map(conFecha);
+  const trabajosCompletados = (r.trabajosCompletados || []).map(conFecha);
 
   return {
-    online: cursos.length > 0 || notas.length > 0,
-    totalCursos: cursos.length,
-    promedio,
-    asistenciaPct,
+    online: true,
+    totalCursos: r.totalCursos ?? 0,
+    promedio: r.promedio ?? 0,
+    asistenciaPct: r.asistenciaPct ?? 0,
     pendientesCount: trabajosPendientes.length,
     proximosTrabajos: trabajosPendientes.slice(0, 3).map((t) => ({
       titulo: t.titulo, curso: t.curso, vence: t.vence,
     })),
-    calificaciones,
-    notasPorCurso,
+    calificaciones: trabajosCompletados.slice(0, 4).map((t) => ({
+      curso: t.curso, detalle: t.titulo, nota: t.nota,
+    })),
+    notasPorCurso: (r.notasPorCurso || []).map((c) => ({
+      curso: c.curso,
+      docente: c.docente,
+      promedio: c.promedio,
+      items: (c.items || []).map((i) => ({ evaluacion: i.evaluacion, nota: i.nota })),
+    })),
     trabajosPendientes,
     trabajosCompletados,
   };

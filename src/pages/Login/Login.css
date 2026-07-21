@@ -3,34 +3,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1d4ed8, #2563eb 60%, #6366f1);
-  padding: 20px;
+  /* Azul institucional profundo, con una veladura suave para dar aire */
+  background:
+    radial-gradient(90rem 45rem at 15% -10%, rgba(255, 255, 255, 0.16), transparent 60%),
+    linear-gradient(150deg, #12306e 0%, #1e4fc4 55%, #2f66e0 100%);
+  padding: 24px;
 }
 
 .login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: #fff;
-  border-radius: 18px;
-  padding: 32px 30px;
-  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
+  border-radius: 20px;
+  padding: 40px 38px;
+  box-shadow: 0 30px 70px rgba(8, 20, 45, 0.35);
 }
 
 .login-brand {
   text-align: center;
-  margin-bottom: 26px;
+  margin-bottom: 30px;
 }
 
 .login-brand h1 {
   color: var(--azul);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .login-brand p {
   color: var(--texto-2);
-  font-size: 13px;
-  margin-top: 4px;
+  font-size: 12.5px;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
 }
 
 .login-form {
@@ -50,12 +55,12 @@
 }
 
 .login-error {
-  color: #dc2626;
+  color: var(--rojo);
   font-size: 13px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 9px;
-  padding: 9px 12px;
+  background: var(--rojo-bg);
+  border: 1px solid #f5c6c6;
+  border-radius: var(--radio-sm);
+  padding: 10px 12px;
 }
 
 .login-submit {

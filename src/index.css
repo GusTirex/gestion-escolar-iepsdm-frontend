@@ -1,21 +1,39 @@
 /* ============================================================
-   Estilos globales del Campus Virtual
-   Paleta y base comun para toda la app.
+   Campus Virtual IEPSDM — estilos globales
+   Paleta institucional: azul profundo + neutros con sesgo frio.
    ============================================================ */
 :root {
-  --azul: #2563eb;
-  --azul-osc: #1d4ed8;
-  --azul-bg: #eff4ff;
-  --texto: #111827;
-  --texto-2: #6b7280;
-  --linea: #e5e7eb;
-  --fondo: #f3f4f6;
+  /* Marca */
+  --azul: #1e4fc4;
+  --azul-osc: #17389a;
+  --azul-bg: #eef3ff;
+  --azul-borde: #c7d8fb;
+
+  /* Neutros (sesgo azulado, no grises planos) */
+  --texto: #0f1b2d;
+  --texto-2: #5b6b82;
+  --linea: #e3e9f2;
+  --fondo: #f4f7fb;
   --panel: #ffffff;
-  --verde: #16a34a;
-  --naranja: #f59e0b;
-  --naranja-bg: #fff7ed;
+
+  /* Semanticos */
+  --verde: #0e8a4f;
+  --verde-bg: #e8f6ee;
+  --naranja: #d97706;
+  --naranja-bg: #fdf3e3;
+  --rojo: #c62828;
+  --rojo-bg: #fdecec;
+
+  /* Formas */
   --radio: 14px;
-  --sombra: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.05);
+  --radio-sm: 10px;
+  --radio-lg: 18px;
+
+  /* Profundidad por capas */
+  --sombra-sm: 0 1px 2px rgba(15, 27, 45, 0.05);
+  --sombra: 0 1px 2px rgba(15, 27, 45, 0.05), 0 6px 18px rgba(15, 27, 45, 0.06);
+  --sombra-lg: 0 2px 4px rgba(15, 27, 45, 0.06), 0 16px 40px rgba(15, 27, 45, 0.1);
+
   --sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -43,12 +61,15 @@ a {
   text-decoration: none;
 }
 
+/* Escala tipografica: titulos ajustados, texto comodo */
 h1,
 h2,
 h3,
 h4 {
   margin: 0;
   color: var(--texto);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 p {
@@ -58,6 +79,20 @@ p {
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+/* Foco visible para navegacion con teclado */
+:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .vacio {
@@ -84,15 +119,37 @@ button {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
 .estado-error {
   margin: 30px 0;
   padding: 16px 18px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #b91c1c;
-  border-radius: 12px;
+  background: var(--rojo-bg);
+  border: 1px solid #f5c6c6;
+  color: var(--rojo);
+  border-radius: var(--radio-sm);
   font-size: 14px;
   text-align: center;
+}
+
+/* Pantalla de error general (ErrorBoundary) */
+.pantalla-error {
+  max-width: 460px;
+  margin: 80px auto;
+  padding: 32px;
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.pantalla-error p {
+  color: var(--texto-2);
+  font-size: 14px;
 }
 
 /* ===== Componentes compartidos entre portales ===== */
@@ -108,32 +165,44 @@ button {
   border: 1px solid var(--linea);
   border-radius: var(--radio);
   padding: 18px;
-  box-shadow: var(--sombra);
+  box-shadow: var(--sombra-sm);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.stat-card:hover {
+  box-shadow: var(--sombra);
+  transform: translateY(-1px);
 }
 
 .stat-card .lbl {
   color: var(--texto-2);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .stat-card .val {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
-  margin-top: 6px;
+  margin-top: 8px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-card .ic {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radio-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   background: var(--azul-bg);
+  color: var(--azul);
 }
 
 .panel-box {
@@ -141,7 +210,17 @@ button {
   border: 1px solid var(--linea);
   border-radius: var(--radio);
   padding: 20px;
-  box-shadow: var(--sombra);
+  box-shadow: var(--sombra-sm);
+}
+
+.link-btn {
+  color: var(--azul);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
 }
 
 .toolbar {
@@ -163,27 +242,40 @@ button {
 .field select,
 .field input {
   border: 1px solid var(--linea);
-  border-radius: 9px;
-  padding: 9px 10px;
+  border-radius: var(--radio-sm);
+  padding: 10px 11px;
   font-size: 14px;
   outline: none;
   background: #fff;
   color: var(--texto);
   min-width: 200px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field select:focus,
+.field input:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px var(--azul-bg);
 }
 
 .btn-primary {
   background: var(--azul);
   color: #fff;
   border: none;
-  border-radius: 9px;
-  padding: 10px 18px;
+  border-radius: var(--radio-sm);
+  padding: 11px 18px;
   font-size: 14px;
   font-weight: 600;
+  transition: background 0.15s ease;
+  box-shadow: var(--sombra-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--azul-osc);
 }
 
 .btn-primary:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
@@ -195,7 +287,7 @@ button {
 .data-table th,
 .data-table td {
   text-align: left;
-  padding: 11px 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--linea);
   font-size: 14px;
 }
@@ -203,9 +295,18 @@ button {
 .data-table th {
   background: var(--fondo);
   color: var(--texto-2);
-  font-size: 12px;
+  font-size: 11.5px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.06em;
+}
+
+.data-table tbody tr {
+  transition: background 0.12s;
+}
+
+.data-table tbody tr:hover {
+  background: var(--azul-bg);
 }
 
 .data-table tr:last-child td {
@@ -216,9 +317,22 @@ button {
   width: 70px;
   border: 1px solid var(--linea);
   border-radius: 8px;
-  padding: 7px 9px;
+  padding: 8px 9px;
   font-size: 14px;
   text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.nota-input:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px var(--azul-bg);
+}
+
+/* Contenido ancho: scrollea el contenedor, nunca la pagina */
+.tabla-scroll {
+  overflow-x: auto;
 }
 
 @media (max-width: 900px) {
